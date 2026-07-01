@@ -14,7 +14,7 @@ Linux/X11/XWayland fork of DMustache's Dota 2 Boot Catcher bot.
 
 1. Download the latest Linux release from GitLab:
 
-   <https://gitlab.com/PlaceboEffect/dota2-boot-catcher-linux/-/releases>
+   <https://gitlab.com/PlaceboEffect/dota2-auto-boot-catcher-linux/-/releases>
 
 2. Extract it:
 
