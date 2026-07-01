@@ -7,6 +7,10 @@ This repository is a **local CachyOS/Linux fork/port** of DMustache's original B
 
 The upstream Rust version is Windows-only and uses WinAPI (`GDI BitBlt` + `SendInput`). This fork replaces those parts with Linux/X11/XWayland-compatible capture and input so it can target the Dota 2 Dark Carnival Boot Catcher minigame on CachyOS.
 
+## Showcase
+
+![Boot Catcher gameplay preview](assets/preview.gif)
+
 > **Wayland note:** This is not a native Wayland capture implementation. On a CachyOS Wayland session it works by targeting Dota 2 as an **XWayland** window. If `--list-windows` can see `Dota 2`, this backend can capture it.
 
 ## Prerequisites
