@@ -199,6 +199,29 @@ Useful columns:
 - `error` — `target_x - cart_x`; positive means move right, negative means move left.
 - `action` / `key` — chosen movement.
 
+## GitLab CI releases
+
+The repository includes a `.gitlab-ci.yml` pipeline with three stages:
+
+- `check` — runs `cargo fmt -- --check`, `cargo check --locked`, and `cargo test --locked`.
+- `linux_release` — builds `cargo build --release --locked` and uploads Linux x86_64 artifacts.
+- `release` — runs only for Git tags and creates a GitLab Release with artifact links.
+
+Release artifacts:
+
+- `boot_catcher_rs-linux-x86_64.tar.gz` — packaged binary plus README/LICENSE/template.
+- `boot_catcher_rs` — raw release binary.
+- `SHA256SUMS` — checksums for the archive and binary.
+
+Create a release by pushing a version tag, for example:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+GitLab will then create a release named `Boot Catcher Linux v0.1.0`.
+
 ## Performance notes
 
 On the Hermes test run with the cropped Dota playfield, the default XGetImage backend ran above 60 FPS:
