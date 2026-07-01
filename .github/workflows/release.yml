@@ -1,0 +1,104 @@
+name: CI / Release
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+  PACKAGE_NAME: boot_catcher_rs
+  RELEASE_ARCHIVE: boot_catcher_rs-linux-x86_64.tar.gz
+
+jobs:
+  build:
+    name: Build Linux release
+    runs-on: ubuntu-latest
+    container: rust:latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            pkg-config \
+            libx11-dev \
+            libxtst-dev \
+            libxext-dev \
+            ca-certificates \
+            tar \
+            gzip
+
+      - name: Show toolchain
+        run: |
+          rustc --version
+          cargo --version
+
+      - name: Check formatting
+        run: |
+          rustup component add rustfmt
+          cargo fmt -- --check
+
+      - name: Check and test
+        run: |
+          cargo check --locked
+          cargo test --locked
+
+      - name: Build release binary
+        run: cargo build --release --locked
+
+      - name: Package release artifacts
+        run: |
+          mkdir -p dist package
+          cp target/release/${PACKAGE_NAME} package/${PACKAGE_NAME}
+          cp README.md LICENSE boot_flying_template.png package/
+          chmod +x package/${PACKAGE_NAME}
+          tar -czf dist/${RELEASE_ARCHIVE} -C package .
+          cp target/release/${PACKAGE_NAME} dist/${PACKAGE_NAME}
+          sha256sum dist/${RELEASE_ARCHIVE} dist/${PACKAGE_NAME} > dist/SHA256SUMS
+          ls -lh dist
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: boot_catcher_rs-linux-x86_64
+          path: |
+            dist/${{ env.RELEASE_ARCHIVE }}
+            dist/${{ env.PACKAGE_NAME }}
+            dist/SHA256SUMS
+
+  release:
+    name: Publish GitHub release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: boot_catcher_rs-linux-x86_64
+          path: dist
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          if gh release view "${TAG_NAME}" >/dev/null 2>&1; then
+            gh release upload "${TAG_NAME}" dist/* --clobber
+          else
+            gh release create "${TAG_NAME}" dist/* \
+              --title "Boot Catcher Linux ${TAG_NAME}" \
+              --notes "Linux/X11/XWayland release build for Dota 2 Boot Catcher. Download the Linux x86_64 archive below."
+          fi

@@ -12,9 +12,9 @@ Linux/X11/XWayland fork of DMustache's Dota 2 Boot Catcher bot.
 
 ## Quick start
 
-1. Download the latest Linux release from GitLab:
+1. Download the latest Linux release from GitHub:
 
-   <https://gitlab.com/PlaceboEffect/dota2-auto-boot-catcher-linux/-/releases>
+   <https://github.com/platzebo/dota2-boot_catcher-linux/releases>
 
 2. Extract it:
 
@@ -132,9 +132,9 @@ The binary will be:
 target/release/boot_catcher_rs
 ```
 
-## GitLab CI releases
+## GitHub Actions releases
 
-The GitLab pipeline builds a Linux x86_64 release artifact on every branch/tag. Version tags create a GitLab Release.
+The GitHub Actions workflow builds a Linux x86_64 release artifact on every branch/tag. Version tags create a GitHub Release.
 
 Example:
 
