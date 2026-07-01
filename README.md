@@ -51,6 +51,31 @@ cargo --version
 rustc --version
 ```
 
+## Recommended Dota settings: 60 FPS / resolution
+
+This fork is tuned for **60 FPS** control updates:
+
+```bash
+./target/release/boot_catcher_rs --fps 60 --window-title "Dota 2"
+```
+
+The current tested setup is a **2048x1152** Dota 2 window. The tool does **not** analyze the full 2048x1152 window by default; it automatically crops to the Boot Catcher playfield, approximately:
+
+```text
+Dota window:      2048x1152
+Capture/playfield: 688x916 at offset 682,165
+Measured capture: ~84 FPS with XGetImage on the tested CachyOS/XWayland setup
+```
+
+Recommended setup:
+
+- Dota 2 in **Windowed** or **Borderless Window** mode.
+- Target bot loop: `--fps 60`.
+- Tested window resolution: **2048x1152**.
+- Keep the default playfield crop enabled for stable 60 FPS.
+- Smaller windows such as **1600x900** or **1280x720** should also work, but may need `--game-rect L,T,W,H` if the automatic crop does not line up with your UI scale.
+- Avoid `--full-window` for normal use: full-window capture is slower and can detect Dota UI/art as false game objects.
+
 ## Build
 
 ```bash
